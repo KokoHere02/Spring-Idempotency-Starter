@@ -11,7 +11,6 @@ import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -37,7 +36,7 @@ class IdempotencyAspectTest {
     @Autowired
     private DemoService demoService;
 
-    @MockBean
+    @Autowired
     private RedissonClient redissonClient;
 
     private final ConcurrentHashMap<String, Long> redisStore = new ConcurrentHashMap<>();
@@ -144,6 +143,10 @@ class IdempotencyAspectTest {
     @Configuration
     @EnableAspectJAutoProxy(proxyTargetClass = true)
     static class TestConfig {
+        @Bean
+        RedissonClient redissonClient() {
+            return Mockito.mock(RedissonClient.class);
+        }
 
         @Bean
         IdempotencyAspect idempotencyAspect(RedissonClient redissonClient) {
@@ -200,3 +203,4 @@ class IdempotencyAspectTest {
         }
     }
 }
+
